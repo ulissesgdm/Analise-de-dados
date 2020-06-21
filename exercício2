@@ -315,4 +315,64 @@ banco %>%
 
 # Responder as questões teóricas da aula abaixo
 
+#Selecione o principal artigo do campo de estudos relacionado ao seu trabalho e 
+#responda as seguintes questões: 1 - Qual é a questão da pesquisa? 2 - Qual é a 
+#teoria? 3 - Qual é o desenho de pesquisa? 4 - Como o artigo se sai nos 4 quesitos 
+#de avaliação de causalidade? 5 – O que ele conclui? 6 - Como a sua pesquisa dá um 
+#passo a mais para o desenvolvimento teórico presente neste artigo?
+  
+#Não existe um artigo específico de grande repercussão com essa temática, os com 
+#maior divulgação são os que tratam da eficácia das políticas afirmativas na 
+#redução das desigualdades raciais nas universidades, usarei estes como base, mas 
+#focarei no artigo “Acesso de Negros às Universidades Públicas” de Antônio Sérgio 
+#Alfredo Guimarães. Este trabalho em específico tem como questão principal 
 
+#1- O acesso de negros a Universidades Públicas e os efeitos sociais do acesso à 
+#educação superior. 
+
+#2- A teoria gira em todo da afirmação de que política de cotas pode ser uma 
+#ferramenta plausível para a redução da desigualdade racial. 
+
+#3- O desenho de pesquisa é feito a partir de dados históricos sobre a desigualdade 
+#racial no Brasil e nas universidades públicas brasileiras, bem como os primeiros 
+#efeitos das cotas raciais implementadas isoladamente por algumas instituições 
+#públicas de ensino. 
+
+#4-  A variável dependente (y) apresentada no artigo é a composição racial do corpo 
+#discente das universidades públicas e a independente (x) é a promoção de políticas 
+#afirmativas; A variação da composição racial das universidades, não é levada em 
+#conta para a mudança de curto prazo na instituição ou não de políticas afirmativas; 
+#O artigo demonstra como a composição racial das universidades analisadas apresentou 
+#alterações após a aplicação das primeiras políticas de cotas, mesmo havendo uma 
+#limitação de censos que abarcavam a composição racial dos universitários; A 
+#existência de políticas color-blind são levadas em conta, apesar dos dados da 
+#composição racial do ensino superior serem diminutos, nota-se um crescimento 
+#gradual a partir da aplicação de ações afirmativas. 
+
+#Elabore qual é a pergunta da sua pesquisa em apenas uma frase
+#A lei de cotas raciais de 2012 já influencia na aprovação de negros (pretos e 
+#pardos) no Exame da Ordem dos Advogados do Brasil?
+  
+#  1 Existe uma argumentação razoável para X causar Y? - teoria propriamente
+#dita : como e por que.
+#O aumento no número de negros nas universidades devido à lei de cotas(x) 
+#proporciona o aumento de advogados negros aprovados na OAB(y).
+
+#2 Podemos descartar a chance de Y causar X? - causalidade reversa
+#Aparentemente sim, a quantidade de negros aprovados na OAB não interfere 
+#diretamente a curto prazo na entrada de negros nas universidades.
+
+#3 Existe covariação entre X e Y? - análise empírica que mostre a associação
+#entre as variáveis
+#A possibilidade de covariação entre a composição racial das universidades e a 
+#aprovação no Exames da Ordem dos Advogados é alta, já que aproximadamente ¼ dos 
+#aprovados ainda são estudantes universitários quando realizam o exame, 
+#desconsiderando os recém formados.
+
+#4 Foi levado em consideração outras variáveis Z que podem fazer a
+#associação entre X e Y desaparecer? - variável confounding correlacionada
+#Sim, a variável dependente e independente
+#Sim, esse é um dos motivos da variável dependente ser a aprovação no Exame da 
+#OAB, que não possui outro sistema de políticas afirmativas, diferentemente do 
+#judiciário e Ministério Público, por exemplo, que utilizam cotas em seu concursos 
+#de admissão.
