@@ -1,0 +1,300 @@
+# Utilizando o banco world do pacote poliscidata, faça um  
+# histograma que também indique a média  e um boxplot 
+# da variável gini10
+# Descreva o que você pode observar a partir deles.
+library(poliscidata)
+library(tidyverse)
+install.packages("poliscidata")
+install.packages("scales")
+library(scales)
+install.packages("ggbeeswarm")
+library(ggbeeswarm)
+
+summarise(world)
+glimpse(world)
+
+mundo <- world
+
+ggplot(world, aes(x = gini10)) + geom_histogram()
+#É possível observar um maior número de países com o índice de gini entre 30 e 45,
+#há um número considerável de países com índice por volta de 50, como aponta o leve
+#crescimento do gráfico próximo a esse número. Se aumentarmos o número de camadas
+#por barra é possível observar esse crescimento melhor.
+ggplot(world, aes(x = gini10)) + geom_histogram(binwidth = 3)
+
+world %>% summarise(mean(gini10, na.rm = T))
+
+ggplot(world, aes(mean(gini10, na.rm = T))) + geom_histogram(binwidth = 0.1)
+#Esse gráfico aponta o gini médio dos países analisados (algo por 
+#volta de 40, especificamente 40.12941), diminuí as camadas para torná-lo
+#mais próximo ao número exato.
+
+ggplot(world, aes(gini10)) + geom_boxplot()
+#O boxplot apresenta a densidade de países com certo índice de gini por quartil.
+#A partir desse gráfico é possível observar que o segundo quartil (25%-50%) é mais
+#denso que os outros, ou seja, encontra-se um maior número de países em uma pequena
+#variação no índice de gini (entre 33 e 39, aproximadamente). Já o último quartil 
+#(75%-100%)é o menos denso, abrangendo uma grande variação do índice (entre 48 e 64, 
+#aproximadamente).
+
+#_______________________________________________________________________________
+
+# Utilizando as funções de manipulação de dados da aula passada,
+# faça uma tabela que sumarize a media (função mean), 
+# mediana (funcao median) e o desvio padrão (fundao sd) da 
+# renda per capta (variável gdppcap08), agrupada por tipo de regime 
+# (variável democ).
+# Explique a diferença entre valores das médias e medianas.
+# Ilustre com a explicação com gráfico de boxplot.
+# Os dados corroboram a hipótese da relação entre democracia
+# e desempenho economico?
+
+
+Renda_per_capta <- world %>% group_by(democ, na.rm = T) %>% 
+  summarise(média = mean(gdppcap08, na.rm = T),
+            mediana = median(gdppcap08, na.rm = T),
+            desvio_padrão = sd (gdppcap08, na.rm = T))
+
+#A mediana possibilita a visualização dos valores intermediários de um grupo, 
+#ela consegue corrigir possíveis distorções encontradas nas médias quando algum
+#determinado componente do grupo possui valores dissonantes do resto, situação que 
+#"moveria a média para valores mais altos ou baixos. Isso acontece porque, enquanto
+#a média é a soma de todos os valores dividido pelo número de componentes, a mediana
+#é o valor do componente situado no "meio" do conjunto de dados.No caso em questão 
+#é possível notar que a mediana da renda per capita, em ambas as categorias, é bem 
+#menor que a média, chegando a ser menos da metade da média em países não-democráticos.
+
+ggplot(world, aes(gdppcap08, na.rm = T)) + geom_boxplot() 
+
+democracias <- world %>%
+  +   filter(democ == "Yes")
+
+ditaduras <- world %>%
+  +   filter(democ =="No")
+
+ggplot(democracias, aes(gdppcap08, na.rm = T)) + geom_boxplot()
+
+ggplot(ditaduras, aes(gdppcap08, na.rm = T)) + geom_boxplot()
+
+#Os gráficos acima produzidos demonstram uma maior desigualdade entre as "ditaduras"
+#bem como uma renda per capita média mais baixa entre esses países. Ressalta-se 
+#ainda a pouca densidade do último quartil em contraposição a alta concentração 
+# do primeiro e segundo quartis.
+
+#____________________________________________________________________________
+
+# Carregue o banco states que está no pacote poliscidata 
+# Mantenha apenas as variáveis obama2012, conpct_m, hs_or_more,
+# prcapinc, blkpct10, south, religiosity3, state
+
+states %>%
+  select(obama2012, conpct_m, hs_or_more,
+         prcapinc, blkpct10, south, religiosity3, state)
+
+
+# Carregue o banco nes que está no pacote poliscidata
+# Mantenha apenas as variáveis obama_vote, ftgr_cons, dem_educ3,
+# income5, black, south, relig_imp, sample_state
+
+nes %>%
+  select(obama_vote, ftgr_cons, dem_educ3,
+         income5, black, south, relig_imp, sample_state)
+
+
+# As variáveis medem os mesmos conceitos, voto no obama em 2012, 
+# conservadorismo, educação, renda, cor, norte-sul, 
+# religiosidade e estado. A diferença é que o nes é um banco de
+# dados com surveys individuais e o states é um banco de dados
+# com informações por estado
+#
+# Faça um gráfico para cada banco representando o nível de
+# conservadorismo. Comente as conclusões que podemos ter
+# a partir deles sobre o perfil do eleitorado estadunidense.
+# Para ajudar, vocês podem ter mais informações sobre os bancos
+# de dados digitando ?states e ?nes, para ter uma descrição das
+# variáveis
+
+ggplot(states, aes(x = conpct_m)) + geom_histogram()
+
+ggplot(nes, aes(x = ftgr_cons)) + geom_histogram()
+
+ggplot(states, aes(x = conpct_m)) + geom_density() + 
+  geom_vline(aes(xintercept = mean(conpct_m, na.rm = T)))
+
+ggplot(nes, aes(x = ftgr_cons)) + geom_density(adjust = 3) +
+  geom_vline(aes(xintercept = mean(ftgr_cons, na.rm = T)))
+
+#Testei o grafico historiograma, mas achei o gráfico de densidade mais didático
+#para comparar a "curva de conservadorismo" de acordo com a densidade de respostas 
+#em torno de uma determinado "nível" de conservadorismo. Diminuí a sensibilidade do 
+#gráfico do "nes" para que fosse possível uma melhor comparação entre os dois, tornando 
+#as curvas deste mais "suaves". Também adicionei uma linha para indicar a média do 
+#grupo. Pode-se notar a partir dos gráficos que há uma tendência similar de curva, no 
+#entanto, a média do banco "states" está localizada no campo liberal, enquanto a do 
+#"nes" está um poco inclinada para o conservadorismo.
+
+#_____________________________________________________________________________
+
+# Qual é o tipo de gráfico apropriado para descrever a variável
+# de voto em obama nos dois bancos de dados?
+# Justifique e elabore os gráficos
+
+ggplot(states, aes(obama2012)) + geom_boxplot()
+
+ggplot(states, aes(obama2012)) + geom_density() +
+geom_vline(aes(xintercept = median(obama2012, na.rm = T)))
+
+#Escolhi os modelos boxplot e density. O primeiro gráfico divide os estados em 
+#quartis mostrando, por exemplo, que o terceiro quartil está concentrado entre 50%
+#e 56%, o que indica que Obama obteve muitas vitórias por uma margem apertada.
+#O segundo é um gráfico em linha por densidade e mostra as percentagens mais repetidas
+#no pleito de 2012. Adicionei um linha da mediana para indicar que os valores
+#centrais do grupo de dados são favoráveis à Obama. Essa linha é importante 
+#principalmente quando correlacionada com o sistema eleitoral norte-americano que
+#considera a regra "winner takes all" em muitos estados.
+
+ggplot(nes, aes(obama_vote, na.rm = T)) + geom_bar(binwidth = 1)
+
+#O segundo gráfico é mais simples, tem por variável o número de votos declarados
+#no banco de dados "nes". No caso de voto favorável a Obama o banco registra o 
+#termo "1", caso voto contrário registra-se "0". Podemos observar nesse gráfico
+#que, dentre as pessoas entrevistadas, aproximadamente 1700 declararam não ter votado
+#em Obama e 2500 afirmaram ter votado no candidato.
+
+#____________________________________________________________________
+
+# Crie dois bancos de dados a partir do banco nes, um apenas com
+# respondentes negros e outro com não-negros. A partir disso, faça
+# dois gráficos com a proporção de votos no obama.
+# O que você pode afirmar a partir dos gráficos?
+# Você diria que existe uma relação entre voto em Obama e cor?
+
+negros <- nes %>%
+  filter(black == "Yes")
+
+não_negros <- nes %>%
+  filter(black == "No")
+
+ggplot(negros, aes(obama_vote, ..count../sum(..count..))) + geom_bar(na.rm = T) +
+  scale_y_continuous(labels = percent)
+
+ggplot(não_negros, aes(obama_vote, ..count../sum(..count..))) + geom_bar(na.rm = T) +
+  scale_y_continuous(labels = percent)
+
+#É possivel observar que, enquanto os negros entrevistados foram quase unânimes
+#no voto favorável à Obama, os não-negros ficaram divididos em percentuais muito
+#iguais, havendo, contudo, uma ligeira vantagem no voto pró-Obama. Sim, é possível 
+#afirmar que as variáveis de raça e voto em Obama são covariantes.
+
+#______________________________________________________________
+
+# A partir do banco de dados states, faça uma comparação semelhante.
+# Faça um gráfico com as porcentagens de votos em Obama para estados
+# que estão acima da mediana da porcentagem de população negra nos estados,
+# e outro gráfico com as porcentagens de votos em Obama para os estados
+# que estão abaixo da mediana de população negra.
+# O que você pode afirmar a partir dos gráficos?
+# Podemos chegar a mesma conclusão anterior?
+
+states %>%  summarise(median(obama2012))
+
+mais_negros <- states %>%  filter(blkpct10 > (median(blkpct10)))
+
+menos_negros <- states %>%  filter(blkpct10 < (median(blkpct10)))
+
+ggplot(mais_negros, aes(obama2012)) + geom_density() +
+geom_vline(aes(xintercept = median(obama2012, na.rm = T)))
+
+ggplot(menos_negros, aes(obama2012)) + geom_density() +
+geom_vline(aes(xintercept = median(obama2012, na.rm = T)))
+
+#Não, a partir de gráficos de densidade e da ulilização de uma linha para demarcar
+#a mediana, é possível observar que estados com maior concentração da população
+#negra votaram menos em Obama nas eleições de 2012.
+
+#____________________________________________________________________________
+
+# A partir da varíavel X do banco df abaixo
+df <- data.frame(x = cos(seq(-50,50,0.5)))
+# Faça os tipos de gráficos que representem esse tipo de variável
+# comentando as diferenças entre elas e qual seria a mais adequada
+
+ggplot(df, aes(x)) + geom_density()
+ggplot(df, aes(x)) + geom_density(adjust = 0.1)
+#O modelo do gráfico em linha ajustado para 0.1 permite um maior detalhamento dos 
+#dados, já que há pequenas variações que poderiam ser desconsideradas em um gráfico
+#menos detalhado.
+
+ggplot(df, aes(x = x, y = "")) + geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
+#Já o gráfico "violino" possibilita a visualização dos quartis, demonstrando a dimunição
+#dos valores quanto mais próximo de x = 0.
+
+# responsa as questões teóricas abaixo
+
+#Antes de responder as questões é importante informar que modifiquei base de dados 
+#e, consequentemente, a hipótese do trabalho. A hipótese da pesquisa é a de que 
+#políticas afirmativas raciais vinculadas ao PROUNI e à Lei de Cotas de 2012 
+#influenciam no número universitários negros. Para comprovar tal hipótese serão 
+#utilizados o Censo do IBGE de 2000 e 2010, o Censo do Ensino Superior fornecido 
+#pelo INEP e os dados abertos do PROUNI fornecidos pelo MEC. Também serão levados 
+#em conta os dados fornecidos pelo IPEA sobre as desigualdades raciais no Brasil 
+#(Retratos da desigualdade) e do PNAD, também fornecidos pelo IBGE.
+
+
+#-QUESTÃO 1 e 2:  A variável dependente da pesquisa é a entrada de negros no 
+#ensino superior do país, a variável independente é a entrada de negros via PROUNI  
+#(que, espera-se, tenha correlação com a entrada de negros nas instituições privadas 
+#de ensino superior) e via a Lei de Cotas de 2012 (espera-se correlação com a 
+#entrada de negros nas instituições                                                                                                                                                                                                                                                                                                      federais de ensino superior).
+
+#A operacionalização será feita como levantamento da série histórica da composição 
+#racial das instituições de ensino superior e a comparação com variáveis independentes, 
+#observando assim até onde vai a covariação entre os números, o quanto as políticas 
+#afirmativas são responsáveis pelo acesso de alunos negros ao ensino superior. É 
+#importante observar possíveis covariações entre o número de negros que adentram o 
+#ensino superior com o número de vagas ofertadas pelo PROUNI e pelo sistema de cotas.
+
+#As variáveis independente serão operacionalizadas através dos dados do PROUNI 
+#disponibilizados pelo MEC e pela aplicação legal da Lei de Cotas de 2012, que 
+#utilizou um crescimento gradativo de percentuais de vagas ofertadas via o regime 
+#de cotas raciais. Já as variáveis dependentes serão operacionalizadas pelos dados 
+#do Censo do IBGE de 2000 e 2010, e o Censo do Ensino Superior (INEP) que a partir 
+#de 2011 adicionou em seu questionário o critério racial.
+
+#Alguns desses dados já estão disponíveis detalhadamente em tabelas, outros, no 
+#entanto, precisam de tratamento, sendo fornecidos através de microdados.
+
+#QUESTÃO 3 (4 do cap 5 do livro):
+#a- Um dos dados já obtidos é o do Censo do Ensino Superior (CES), o INEP 
+#disponibiliza sinopses que trazem dados mais gerais sobre a composição racial 
+#dos estudantes matriculados no ensino superior brasileiro.
+
+#b- O CES possui dados sobre a raça dos ingressantes no ensino superior desde 
+#2011, a última versão disponível é a de 2018.
+
+#c- Sim, a variável apresenta os dados detalhados das instituições públicas de 
+#ensino superior (federais, estaduais e municipais) e das instituições privadas. 
+#Trata-se de uma base de dados governamental fornecidas pelas próprias universidades 
+#e utilizadas na análise de resultados de programas sociais. Apenas com os dados da 
+#sinopse do CES já é possível observar a variação do número de negros no ensino 
+#superior desde 2011. Como se trata de dados brutos não há operacionalização realizada 
+#pelo órgão que levantou os dados.
+
+#d- O que o trabalho busca é observar a influência das políticas afirmativas, seja 
+#através do PROUNI ou da Lei de Cotas, na composição racial do corpo discente 
+#universitário. A base de dados do INEP é a mais ampla e detalhada que existe sobre 
+#o tema, no entanto, está limitada pelo tempo, não havendo dados anteriores a 2011 
+#(por isso serão usados os dados do IBGE para complementar a variável). Entretanto, 
+#a validade da base de dados para variável é consideravelmente alta, principalmente 
+#para a análise das instituições federais.
+
+
+#QUESTÃO 4:
+#A forma ideal seria comparar separadamente a covariação: Número de matrículas de 
+#negros no ensino superior privado via PROUNI x Número total de matrículas de 
+#alunos negros no ensino superior; e a covariação: Número de matrículas advindas 
+#das cotas federais x Número de negros matriculados nas universidades federais. 
+#A segunda covariação será possível de se realizar, tendo em vista o início da 
+#aplicação da Lei de Cotas e da base de dados do INEP. A primeira variável, 
+#contudo, terá limitações, já que o PROUNI foi iniciado em 2005 e a base de dados 
+#do INEP é de 2011. 
