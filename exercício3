@@ -13,7 +13,6 @@ library(ggbeeswarm)
 summarise(world)
 glimpse(world)
 
-mundo <- world
 
 ggplot(world, aes(x = gini10)) + geom_histogram()
 #É possível observar um maior número de países com o índice de gini entre 30 e 45,
@@ -30,12 +29,16 @@ ggplot(world, aes(mean(gini10, na.rm = T))) + geom_histogram(binwidth = 0.1)
 #mais próximo ao número exato.
 
 ggplot(world, aes(gini10)) + geom_boxplot()
+
+ggplot (world, aes(x = gini10, y = "")) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
 #O boxplot apresenta a densidade de países com certo índice de gini por quartil.
 #A partir desse gráfico é possível observar que o segundo quartil (25%-50%) é mais
 #denso que os outros, ou seja, encontra-se um maior número de países em uma pequena
 #variação no índice de gini (entre 33 e 39, aproximadamente). Já o último quartil 
 #(75%-100%)é o menos denso, abrangendo uma grande variação do índice (entre 48 e 64, 
-#aproximadamente).
+#aproximadamente). Essas informações, contudo, ficam ainda mais claras se utilizarmos
+#o modelo "violin" delimitando os quartis.
 
 #_______________________________________________________________________________
 
@@ -58,23 +61,26 @@ Renda_per_capta <- world %>% group_by(democ, na.rm = T) %>%
 #A mediana possibilita a visualização dos valores intermediários de um grupo, 
 #ela consegue corrigir possíveis distorções encontradas nas médias quando algum
 #determinado componente do grupo possui valores dissonantes do resto, situação que 
-#"moveria a média para valores mais altos ou baixos. Isso acontece porque, enquanto
+#moveria a média para valores mais altos ou baixos. Isso acontece porque, enquanto
 #a média é a soma de todos os valores dividido pelo número de componentes, a mediana
 #é o valor do componente situado no "meio" do conjunto de dados.No caso em questão 
 #é possível notar que a mediana da renda per capita, em ambas as categorias, é bem 
 #menor que a média, chegando a ser menos da metade da média em países não-democráticos.
 
-ggplot(world, aes(gdppcap08, na.rm = T)) + geom_boxplot() 
+#__________________________________________________________________
 
-democracias <- world %>%
-  +   filter(democ == "Yes")
+ggplot(world, aes(x = gdppcap08, y = "")) + 
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
 
-ditaduras <- world %>%
-  +   filter(democ =="No")
+democracias <- world %>% filter(democ == "Yes")
 
-ggplot(democracias, aes(gdppcap08, na.rm = T)) + geom_boxplot()
+ditaduras <- world %>%  filter(democ =="No")
 
-ggplot(ditaduras, aes(gdppcap08, na.rm = T)) + geom_boxplot()
+ggplot(democracias, aes(x = gdppcap08, y = "")) + 
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
+
+ggplot(ditaduras, aes(x = gdppcap08, y = "")) + 
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
 
 #Os gráficos acima produzidos demonstram uma maior desigualdade entre as "ditaduras"
 #bem como uma renda per capita média mais baixa entre esses países. Ressalta-se 
@@ -91,6 +97,7 @@ states %>%
   select(obama2012, conpct_m, hs_or_more,
          prcapinc, blkpct10, south, religiosity3, state)
 
+#____________________________________________________________________________
 
 # Carregue o banco nes que está no pacote poliscidata
 # Mantenha apenas as variáveis obama_vote, ftgr_cons, dem_educ3,
@@ -100,6 +107,7 @@ nes %>%
   select(obama_vote, ftgr_cons, dem_educ3,
          income5, black, south, relig_imp, sample_state)
 
+#______________________________________________________________________
 
 # As variáveis medem os mesmos conceitos, voto no obama em 2012, 
 # conservadorismo, educação, renda, cor, norte-sul, 
@@ -124,7 +132,7 @@ ggplot(states, aes(x = conpct_m)) + geom_density() +
 ggplot(nes, aes(x = ftgr_cons)) + geom_density(adjust = 3) +
   geom_vline(aes(xintercept = mean(ftgr_cons, na.rm = T)))
 
-#Testei o grafico historiograma, mas achei o gráfico de densidade mais didático
+#Testei o gráfico historiograma, mas achei o gráfico de densidade mais didático
 #para comparar a "curva de conservadorismo" de acordo com a densidade de respostas 
 #em torno de uma determinado "nível" de conservadorismo. Diminuí a sensibilidade do 
 #gráfico do "nes" para que fosse possível uma melhor comparação entre os dois, tornando 
@@ -139,13 +147,14 @@ ggplot(nes, aes(x = ftgr_cons)) + geom_density(adjust = 3) +
 # de voto em obama nos dois bancos de dados?
 # Justifique e elabore os gráficos
 
-ggplot(states, aes(obama2012)) + geom_boxplot()
+ggplot(states, aes(x = obama2012, y = "")) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
 
 ggplot(states, aes(obama2012)) + geom_density() +
 geom_vline(aes(xintercept = median(obama2012, na.rm = T)))
 
-#Escolhi os modelos boxplot e density. O primeiro gráfico divide os estados em 
-#quartis mostrando, por exemplo, que o terceiro quartil está concentrado entre 50%
+#Escolhi os modelos violin e density. O primeiro gráfico divide os estados em 
+#quartis mostrando, por exemplo, que o terceiro quartil está concentrado entre 49%
 #e 56%, o que indica que Obama obteve muitas vitórias por uma margem apertada.
 #O segundo é um gráfico em linha por densidade e mostra as percentagens mais repetidas
 #no pleito de 2012. Adicionei um linha da mediana para indicar que os valores
