@@ -1,0 +1,160 @@
+## Faça todos os gráficos utilizando um tema que você ache mais adequado
+## e nomeie os eixos x e y da maneira adequada
+
+## Carregue o banco world do pacote poliscidata
+
+library(poliscidata)
+library(tidyverse)
+install.packages("ggthemes")
+library(ggthemes)
+banco <- world
+
+## Observe o banco de dados com as funções adequadas
+
+
+
+## A variável democ_regime08 indica se um país é democrático.
+## Usando as ferramentas de manipulacao de bancos de dados, verifique
+## quantos paises sao democraticos ou nao, e apresente esta variável 
+## graficamente
+
+table(banco$democ_regime08)
+
+ggplot(banco, aes(democ_regime08)) +
+  geom_bar() +
+  theme_minimal()
+
+
+## Teste a relação entre a variável democ_regime08 e a variável
+## muslim (que indica se um país é muçulmano ou não). E represente
+## visualmente as variáveis para visualizar se esta religião
+## aumenta ou diminui a chance de um país ser democrático
+## Qual seria sua conclusão com relação a associação destas duas
+## variáveis?
+
+ggplot(banco, aes(muslim, fill = democ_regime08)) +
+  geom_bar(position = "fill")
+
+#A partir desses dados é possível observar uma correlação entre a variável 
+#democ_regime08 e muslim. Sendo assim, democracias são mais raras em paises
+#mulçumanos que os não-mulçumanos.
+
+## A variável gdppcap08 possui informação sobre o PIB per capta
+## dos países. Faça uma representação gráfica desta variável
+
+cap <- banco %>%
+  select(gdppcap08)
+
+ggplot(banco, aes(gdppcap08)) +
+  geom_boxplot() 
+
+ggplot(banco, aes(x = gdppcap08, y = "")) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
+
+## Faça um sumario com a média, mediana e desvio padrão do pib per capta
+## para cada tipo de regime politico, represente a associação destas
+## variáveis graficamente, e faça o teste estatístico adequado para
+## chegar a uma conclusão. Existe associaçào entre as variáveis?
+
+banco %>%
+  filter(!is.na(democ_regime08),
+         !is.na(gdppcap08)) %>%
+  group_by(democ_regime08) %>%
+  summarise(mean(gdppcap08, na.rm = T),
+            median(gdppcap08, na.rm = T),
+            sd(gdppcap08, na.rm = T),
+            n = n())
+
+banco_filtrado <- banco %>%
+  filter(!is.na(democ_regime08),
+         !is.na(gdppcap08))
+
+ggplot(banco_filtrado, aes(gdppcap08, democ_regime08)) +
+  geom_boxplot()
+
+ggplot(banco_filtrado, aes(x = gdppcap08, y = democ_regime08)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) 
+
+ggplot(banco_filtrado, aes(gdppcap08, fill = democ_regime08)) +
+  geom_density(alpha = 0.3) +
+  scale_fill_ptol()
+
+t.test(gdppcap08 ~ democ_regime08, data = banco)
+
+#Sim, existe uma relação entre a variável democ_regime08 e gdppcap08, essa 
+#correlação pode ser observada tanto no modelo gráfico boxplot como no violino,
+#para isso basta focar na alta concentração nos quartis de menor renda dos países
+#não-democráticos, efeito que ocorre com menor intensidade na variável democrática,
+#essa tendência se torna de fácil observação ao sobrepormos os dados com um gráfico
+#de densidade. Além disso, a aplicação do teste T corrobora a correalção das 
+#variáveis, apontando um valor distante de 0 e, portanto, uma razoável covariância.
+
+
+## Por fim, ao invés de utilizar uma variável binária de democracia,
+## utilize a variável dem_score14 para avaliar se existe uma associação
+## entre regime político e desenvolvimento econômico. Represente
+## a associação graficamente, faça o teste estatístico e explica sua
+## conclusão
+
+cor.test(banco$gdppcap08, banco$dem_score14)
+
+banco_filtrado2 <- banco %>%
+  filter(!is.na(gdppcap08),
+         !is.na(dem_score14))
+
+ggplot(banco_filtrado2, aes(dem_score14, gdppcap08)) +
+  geom_jitter()
+
+#Os novos dados endossam a tendência das informações já observadas. Há um 
+#crescimento constante no pib per capita em conjunto com o crescimento do
+#"ìndice democrático". É possível observar também alguns países que fogem à 
+#tendência, mas eles são poucos se comparados com a maioria. O teste de correlação,
+#levando em conta estas questões, apontou uma correlação razoável (0.5), mas não
+#tão contundente.
+
+
+## Teste a associação entre renda perca capta e religiao (com a variável
+## muslim) e represente graficamente. Qual é sua conclusão? 
+
+ggplot(banco_filtrado, aes(gdppcap08, muslim)) +
+  geom_boxplot()
+
+ggplot(banco_filtrado, aes(x = gdppcap08, y = muslim)) +
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) 
+
+ggplot(banco_filtrado, aes(gdppcap08, fill = muslim)) +
+  geom_density(alpha = 0.3) +
+  scale_fill_ptol()
+
+t.test(gdppcap08 ~ muslim, data = banco)
+
+#Através da leitura dos gráficos é possível observar a correlação entre as duas
+#variáveis. O p-valor, no entanto, foi de 0.2, não recomendado por alguns autores.
+#O valor de T, no entanto, foi razoável (2.28), maior que o mínimo recomendado (1.29).
+#Há uma grande concentração de países mulçumanos com uma renda per capita baixa,
+#diferentemente dos países não-mulçumanos, com uma distribuição menos desigual.
+
+
+
+## Comparando suas conclusões anteriores, é possível afirmar qual
+## das duas variáveis possui maior impacto no desenvolvimento economico?
+## Por que? 
+
+#Levando em conta os testes realizados, a correlação entre democracia e renda 
+#aparenta ser mais forte e comprovável (p-valor menores e valor de T mais altos) 
+#do que a cultura e renda. Dados sobre o percentual da população mulçumana nos 
+#países poderia levar a comparação além do que oferece esse banco de dados, já 
+#que trataríamos de duas variáveis contínuas também na correlação cultura e renda.
+
+
+##########################################################################
+
+## Exercício teórico
+## Levando em consideração as variáveis de seu trabalho final,
+## qual dos 3 testes estatísticos utilizados seria adequado utilizar?
+
+#O teste correlação. O trabalho busca encontrar a força da correlação entre a
+#aplicação de políticas afirmativas, via PROUNI e Lei de Cotas, e a composição
+#racial dos alunos ingressantes no ensino superior. Como se trata de duas variáveis
+#contínuas (ingressantes via políticas afirmativas x ingressantes sem políticas 
+#afirmativas) acredito que a utilização do teste de correlação será o adequado.
